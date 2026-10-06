@@ -81,6 +81,10 @@ def ops_reset_store(server: "Server", request: Request) -> Response:
     return json_response(ops.reset_store(server.runtime))
 
 
+def ops_recovery(server: "Server", request: Request) -> Response:
+    return json_response(server.runtime.store.recovery_report())
+
+
 def telemetry(server: "Server", request: Request) -> Response:
     return json_response(telemetry_module.collect(server.runtime).as_dict())
 

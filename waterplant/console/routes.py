@@ -34,6 +34,7 @@ def route_table() -> list[Route]:
         Route("GET", "/catalog", "list all HTTP routes", "catalog"),
         Route("GET", "/ops", "operator counters", "ops_counters"),
         Route("POST", "/ops/reset-store", "factory reset persisted store", "ops_reset_store"),
+        Route("GET", "/ops/recovery", "last startup recovery and discarded tail report", "ops_recovery"),
         Route("GET", "/telemetry", "runtime telemetry counters", "telemetry"),
         Route("GET", "/version", "build version information", "version"),
         Route("GET", "/system", "runtime system information", "system"),
