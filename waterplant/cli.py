@@ -44,6 +44,21 @@ def main(argv: list[str] | None = None) -> int:
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     store = Store.open(args.store)
+    if not store.ready():
+        LOGGER.error("store recovery failed, refusing to start: %s", store.failure_reason)
+        return 2
+    report = store.recovery_report()
+    if report is not None:
+        LOGGER.info("recovery %s: %s", report.event.outcome, report.event.detail)
+        for discarded in report.discarded():
+            LOGGER.warning(
+                "discarded partial write segment=%s seq=%s op=%s key=%s reason=%s",
+                discarded.get("segment"),
+                discarded.get("sequence"),
+                discarded.get("operation"),
+                discarded.get("key"),
+                discarded.get("reason"),
+            )
     try:
         seed_defaults(store)
         host, port = parse_address(args.addr)

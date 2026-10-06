@@ -19,6 +19,7 @@ from waterplant.store import export_state
 
 from . import checks, history, ops
 from . import describe as describe_module
+from . import recovery as recovery_module
 from . import simulate as simulate_module
 from . import snapshot as snapshot_module
 from . import telemetry as telemetry_module
@@ -36,12 +37,22 @@ if TYPE_CHECKING:  # pragma: no cover - imported only for type checkers
 def health(server: "Server", request: Request) -> Response:
     store = server.runtime.store
     return json_response(
-        {"status": "ok", "keys": store.keys(), "size": store.count(), "data": export_state(store)}
+        {
+            "status": "ok" if store.ready() else "degraded",
+            "phase": store.phase,
+            "keys": store.keys(),
+            "size": store.count(),
+            "data": export_state(store),
+        }
     )
 
 
 def health_checks(server: "Server", request: Request) -> Response:
     return json_response({"checks": checks.run_checks(server.runtime)})
+
+
+def recovery_state(server: "Server", request: Request) -> Response:
+    return json_response(recovery_module.collect(server.runtime.store))
 
 
 def snapshot(server: "Server", request: Request) -> Response:

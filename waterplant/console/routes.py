@@ -27,6 +27,7 @@ def route_table() -> list[Route]:
     return [
         Route("GET", "/health", "service health and persisted keys", "health"),
         Route("GET", "/health/checks", "detailed component health checks", "health_checks"),
+        Route("GET", "/recovery", "startup recovery point and discarded partial writes", "recovery_state"),
         Route("GET", "/snapshot", "full component snapshot", "snapshot"),
         Route("GET", "/describe", "human readable component summary", "describe"),
         Route("GET", "/report", "plain text control report", "report"),

@@ -35,6 +35,12 @@ class Server:
                     405, f"method {request.method} not allowed for {request.path}"
                 )
             return error_response(404, f"no route for {request.path}")
+        if request.method != "GET" and not self.runtime.store.ready():
+            return error_response(
+                503,
+                f"store {self.runtime.store.phase}: recovery unfinished or failed, "
+                "mutations are refused",
+            )
         try:
             return handler(self, request)
         except RequestError as exc:
